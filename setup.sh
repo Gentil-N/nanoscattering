@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "------- Setting Up Environment... -------"
 virtualenv venv
 source ./venv/bin/activate
