@@ -5,6 +5,7 @@ from matplotlib.colors import Normalize
 import numpy as np
 import inout
 import threading
+import multiprocessing
 
 def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output_filename):
     res = mietheory.ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len)
@@ -81,7 +82,20 @@ def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsize_lower, 
     partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
     scattering_cross_section = np.zeros((len(partsizes), len(wavelengths)))
     data = inout.load_selected_triangle(filename)
+    def calcul(index):
+        print("start:", index)
+        scattering_cross_section[index] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[index], data[0], data[1], order_len)
+        print("end:", index)
+    max_cores = multiprocessing.cpu_count()
+    threads = []
     for i in range(0, len(partsizes)):
+        while len(threads) == max_cores:
+            for j in range(len(threads)):
+                if not threads[j].is_alive():
+                    del threads[j]
+        new_thread = threading.Thread(target=calcul, args=(i,))
+        new_thread.start()
+        threads.append(new_thread)
         #def tafun():
         #    scattering_cross_section[i] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i], data[0], data#[1], order_len)
         #def tbfun():
@@ -92,7 +106,7 @@ def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsize_lower, 
         #tb.start()
         #ta.join()
         #tb.join()
-        scattering_cross_section[i] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i], data[0], data[1], order_len)
+        #scattering_cross_section[i] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i], data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
     ax0.set_title("Scattering Cross Section")

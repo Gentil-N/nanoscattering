@@ -9,6 +9,8 @@
 #BSUB -o ./output/log.out
 #BSUB -e ./output/log.error
 
+module load python3
+
 source venv/bin/activate
 
 python3 src/main.py
