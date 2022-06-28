@@ -3,7 +3,7 @@
 #BSUB -q hpc
 #BSUB -W 8:00
 #BSUB -R "span[hosts=1]"
-#BSUB -n 1
+#BSUB -n 8
 #BSUB -M 2GB
 #BSUB -u nevgen@dtu.dk
 #BSUB -o ./output/log.out
