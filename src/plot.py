@@ -87,12 +87,14 @@ def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsize_lower, 
         scattering_cross_section[index] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[index], data[0], data[1], order_len)
         print("end:", index)
     max_cores = multiprocessing.cpu_count()
+    print("max cores:", max_cores)
     threads = []
     for i in range(0, len(partsizes)):
         while len(threads) == max_cores:
             for j in range(len(threads)):
                 if not threads[j].is_alive():
                     del threads[j]
+                    break
         new_thread = threading.Thread(target=calcul, args=(i,))
         new_thread.start()
         threads.append(new_thread)
