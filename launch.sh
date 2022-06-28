@@ -1,0 +1,1 @@
+bsub < src/dtu-hpc/task-test.sh

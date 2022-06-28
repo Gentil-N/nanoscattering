@@ -4,6 +4,7 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 import numpy as np
 import inout
+import threading
 
 def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output_filename):
     res = mietheory.ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len)
@@ -80,7 +81,17 @@ def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsize_lower, 
     partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
     scattering_cross_section = np.zeros((len(partsizes), len(wavelengths)))
     data = inout.load_selected_triangle(filename)
-    for i in range(len(partsizes)):
+    for i in range(0, len(partsizes)):
+        #def tafun():
+        #    scattering_cross_section[i] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i], data[0], data#[1], order_len)
+        #def tbfun():
+        #    scattering_cross_section[i + 1] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i + 1], data#[0], data[1], order_len)
+        #ta = threading.Thread(target=tafun)
+        #tb = threading.Thread(target=tbfun)
+        #ta.start()
+        #tb.start()
+        #ta.join()
+        #tb.join()
         scattering_cross_section[i] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i], data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)

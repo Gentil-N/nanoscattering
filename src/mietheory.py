@@ -30,7 +30,7 @@ def d_array(psin, z):
     return dn
 
 def pi_tau_array(n_len, theta):
-    assert n_len >= 3
+    #assert n_len >= 3
     mu = math.cos(theta)
     pi_tau_n = [(0.0, 0.0)] * n_len
     pi_tau_n[0] = (0.0, 0.0)
