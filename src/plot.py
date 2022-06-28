@@ -21,13 +21,14 @@ def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output
     inout.show_plot(output_filename)
 
 def exact_sca_ext_surface(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, order_len, output_filename):
-    partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
-    scattering_cross_section = np.zeros((len(partsizes), len(wavelengths)))
-    extinction_cross_section = np.zeros((len(partsizes), len(wavelengths)))
-    for i in range(len(partsizes)):
-        res = mietheory.ccs_exact(ref_indices_raw, wavelengths, partsizes[i], order_len)
-        scattering_cross_section[i] = res[0]
-        extinction_cross_section[i] = res[1]
+    #partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
+    #scattering_cross_section = np.zeros((len(partsizes), len(wavelengths)))
+    #extinction_cross_section = np.zeros((len(partsizes), len(wavelengths)))
+    #for i in range(len(partsizes)):
+    #    res = mietheory.ccs_exact(ref_indices_raw, wavelengths, partsizes[i], order_len)
+    #    scattering_cross_section[i] = res[0]
+    #    extinction_cross_section[i] = res[1]
+    scattering_cross_section = mietheory.ccs_exact_surface(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, order_len)
     fig0 = plt.figure(num=0)
     fig1 = plt.figure(num=1)
     ax0 = fig0.subplots(nrows=1, ncols=1)

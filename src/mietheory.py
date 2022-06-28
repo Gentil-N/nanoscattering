@@ -3,6 +3,8 @@ import numpy as np
 import math
 import utils
 import inout
+import multiprocessing
+import threading
 
 def psi_array(sjn, z):
     return sjn * z
@@ -129,6 +131,26 @@ def ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, 
         #print(particle_size, ":", float(int(j / len(wavelengths) * 1000)) / 10, " %", end='\r', flush=True)
     #print(particle_size, ": 100.0 %", flush=True)
 
+def ccs_surface_generic(partsize_lower, partsize_upper, number_partsizes, num_wavelengths, spefun):
+    partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
+    res = np.zeros((len(partsizes), num_wavelengths))
+    def calcul(index):
+        print("start:", index, " ", partsizes[index])
+        res[index] = spefun(partsizes[index])#problème: on accumule des tuples (res_csa, res_ext, ...)
+        print("end:", index, " ", partsizes[index])
+    max_cores = multiprocessing.cpu_count()
+    threads = []
+    for i in range(0, len(partsizes)):
+        while len(threads) == max_cores:
+            for j in range(len(threads)):
+                if not threads[j].is_alive():
+                    del threads[j]
+                    break
+        new_thread = threading.Thread(target=calcul, args=(i,))
+        new_thread.start()
+        threads.append(new_thread)
+    return res
+
 # EXACT
 
 def ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len):
@@ -166,6 +188,11 @@ def ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len):
 
     ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n)
     return (res_csa, res_ext, res_csa_an, res_csa_bn, res_ext_an, res_ext_bn)
+
+def ccs_exact_surface(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, order_len):
+    def spefun(partsize):
+        return ccs_exact(ref_indices_raw, wavelengths, partsize, order_len)
+    return ccs_surface_generic(partsize_lower, partsize_upper, number_partsizes, len(wavelengths), spefun)
 
 # NORMAL INTEGRATION
 
