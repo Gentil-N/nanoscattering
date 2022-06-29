@@ -5,6 +5,7 @@ import utils
 import inout
 import multiprocessing
 import threading
+import time
 
 def psi_array(sjn, z):
     return sjn * z
@@ -97,7 +98,7 @@ def function_value(an, bn, xin_x, xin_der_x, phi_theta):
 
 def ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n=1.0):
     upper_x = 2 * math.pi * medium_n * particle_size
-    #print(particle_size, ": 0.0 %", end='\r', flush=True)
+    print(particle_size, ": 0.0 %", end='\r', flush=True)
     for j in range(len(wavelengths)):
         #print(wavelengths[j])
         x = upper_x / wavelengths[j]
@@ -128,20 +129,20 @@ def ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, 
 
         spefun(j, xin_x, xin_der_x, an, bn)
 
-        #print(particle_size, ":", float(int(j / len(wavelengths) * 1000)) / 10, " %", end='\r', flush=True)
-    #print(particle_size, ": 100.0 %", flush=True)
+        print(particle_size, ":", float(int(j / len(wavelengths) * 1000)) / 10, " %", end='\r', flush=True)
+    print(particle_size, ": 100.0 %", flush=True)
 
-def ccs_surface_generic(partsize_lower, partsize_upper, number_partsizes, num_wavelengths, spefun):
-    partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
-    res = np.zeros((len(partsizes), num_wavelengths))
+def ccs_surface_generic(partsizes, spefun):
+    res = []
     def calcul(index):
         print("start:", index, " ", partsizes[index])
-        res[index] = spefun(partsizes[index])#problème: on accumule des tuples (res_csa, res_ext, ...)
+        res.append(spefun(index))
         print("end:", index, " ", partsizes[index])
     max_cores = multiprocessing.cpu_count()
     threads = []
     for i in range(0, len(partsizes)):
         while len(threads) == max_cores:
+            time.sleep(5)
             for j in range(len(threads)):
                 if not threads[j].is_alive():
                     del threads[j]
@@ -149,6 +150,8 @@ def ccs_surface_generic(partsize_lower, partsize_upper, number_partsizes, num_wa
         new_thread = threading.Thread(target=calcul, args=(i,))
         new_thread.start()
         threads.append(new_thread)
+    for thread in threads:
+        thread.join()
     return res
 
 # EXACT
@@ -189,10 +192,24 @@ def ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len):
     ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n)
     return (res_csa, res_ext, res_csa_an, res_csa_bn, res_ext_an, res_ext_bn)
 
-def ccs_exact_surface(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, order_len):
-    def spefun(partsize):
-        return ccs_exact(ref_indices_raw, wavelengths, partsize, order_len)
-    return ccs_surface_generic(partsize_lower, partsize_upper, number_partsizes, len(wavelengths), spefun)
+def ccs_exact_surface(ref_indices_raw, wavelengths, partsizes, order_len):
+    csa = np.zeros((len(partsizes), len(wavelengths)))
+    ext = np.zeros((len(partsizes), len(wavelengths)))
+    csa_an = np.zeros((len(partsizes), len(wavelengths)))
+    csa_bn = np.zeros((len(partsizes), len(wavelengths)))
+    ext_an = np.zeros((len(partsizes), len(wavelengths)))
+    ext_bn = np.zeros((len(partsizes), len(wavelengths)))
+    def spefun(index):
+        res = ccs_exact(ref_indices_raw, wavelengths, partsizes[index], order_len)
+        csa[index] = res[0]
+        ext[index] = res[1]
+        csa_an[index] = res[2]
+        csa_bn[index] = res[3]
+        ext_an[index] = res[4]
+        ext_bn[index] = res[5]
+    
+    ccs_surface_generic(partsizes, spefun)
+    return (csa, ext, csa_an, csa_bn, ext_an, ext_bn)
 
 # NORMAL INTEGRATION
 
@@ -214,6 +231,13 @@ def ccs_integ(ref_indices_raw, wavelengths, particle_size, phi_inf, phi_sup, the
 
     ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n)
     return res
+
+def ccs_integ_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len):
+    csa = np.zeros((len(partsizes), len(wavelengths)))
+    def spefun(index):
+        csa[index] = ccs_integ(ref_indices_raw, wavelengths, partsizes[index], phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
+    ccs_surface_generic(partsizes, spefun)
+    return csa
 
 # INTEGRATION BY TRIANGLE
 
@@ -246,3 +270,10 @@ def ccs_integ_triangle(ref_indices_raw, wavelengths, particle_size, point_coords
     
     ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n)
     return res
+
+def ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, point_coords, indices, order_len):
+    csa = np.zeros((len(partsizes), len(wavelengths)))
+    def spefun(index):
+        csa[index] = ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[index], point_coords, indices, order_len)
+    ccs_surface_generic(partsizes, spefun)
+    return csa

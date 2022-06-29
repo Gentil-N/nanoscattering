@@ -20,15 +20,10 @@ def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output
     ax0.grid()
     inout.show_plot(output_filename)
 
-def exact_sca_ext_surface(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, order_len, output_filename):
-    #partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
-    #scattering_cross_section = np.zeros((len(partsizes), len(wavelengths)))
-    #extinction_cross_section = np.zeros((len(partsizes), len(wavelengths)))
-    #for i in range(len(partsizes)):
-    #    res = mietheory.ccs_exact(ref_indices_raw, wavelengths, partsizes[i], order_len)
-    #    scattering_cross_section[i] = res[0]
-    #    extinction_cross_section[i] = res[1]
-    scattering_cross_section = mietheory.ccs_exact_surface(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, order_len)
+def exact_sca_ext_surface(ref_indices_raw, wavelengths, partsizes, order_len, output_filename):
+    res = mietheory.ccs_exact_surface(ref_indices_raw, wavelengths, partsizes, order_len)
+    scattering_cross_section = res[0]
+    extinction_cross_section = res[1]
     fig0 = plt.figure(num=0)
     fig1 = plt.figure(num=1)
     ax0 = fig0.subplots(nrows=1, ncols=1)
@@ -54,11 +49,8 @@ def integ_sca(ref_indices_raw, wavelengths, particle_size, phi_inf, phi_sup, the
     ax0.grid()
     inout.show_plot(output_filename)
 
-def integ_sca_surface(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len, output_filename):
-    partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
-    scattering_cross_section = np.zeros((len(partsizes), len(wavelengths)))
-    for i in range(len(partsizes)):
-        scattering_cross_section[i] = mietheory.ccs_integ(ref_indices_raw, wavelengths, partsizes[i], phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
+def integ_sca_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len, output_filename):
+    scattering_cross_section = mietheory.ccs_integ_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
     ax0.set_title("Scattering Cross Section")
@@ -79,37 +71,9 @@ def integ_sca_by_triangle(ref_indices_raw, wavelengths, particle_size, order_len
     ax0.grid()
     inout.show_plot(output_filename)
 
-def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsize_lower, partsize_upper, number_partsizes, order_len, filename, output_filename):
-    partsizes = np.linspace(partsize_lower, partsize_upper, number_partsizes)
-    scattering_cross_section = np.zeros((len(partsizes), len(wavelengths)))
+def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsizes, order_len, filename, output_filename):
     data = inout.load_selected_triangle(filename)
-    def calcul(index):
-        print("start:", index)
-        scattering_cross_section[index] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[index], data[0], data[1], order_len)
-        print("end:", index)
-    max_cores = multiprocessing.cpu_count()
-    print("max cores:", max_cores)
-    threads = []
-    for i in range(0, len(partsizes)):
-        while len(threads) == max_cores:
-            for j in range(len(threads)):
-                if not threads[j].is_alive():
-                    del threads[j]
-                    break
-        new_thread = threading.Thread(target=calcul, args=(i,))
-        new_thread.start()
-        threads.append(new_thread)
-        #def tafun():
-        #    scattering_cross_section[i] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i], data[0], data#[1], order_len)
-        #def tbfun():
-        #    scattering_cross_section[i + 1] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i + 1], data#[0], data[1], order_len)
-        #ta = threading.Thread(target=tafun)
-        #tb = threading.Thread(target=tbfun)
-        #ta.start()
-        #tb.start()
-        #ta.join()
-        #tb.join()
-        #scattering_cross_section[i] = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[i], data[0], data[1], order_len)
+    scattering_cross_section[index] = mietheory.ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
     ax0.set_title("Scattering Cross Section")
