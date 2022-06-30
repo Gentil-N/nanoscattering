@@ -77,3 +77,21 @@ def export_collada(point_coords, indices, filename):
 def show_plot(filename):
     plt.savefig(filename)
     plt.show()
+
+def export_spectrum(wavelengths, spectrum, filename):
+    outfile = open(filename, 'w')
+    for i in range(len(wavelengths)):
+        outfile.write(str(wavelengths[i]) + "\t" + spectrum[i])
+    outfile.close()
+
+def import_spectrum(filename):
+    wavelengths = []
+    spectrum = []
+    infile = open(filename, 'r')
+    lines = infile.readlines()
+    for line in lines:
+        data = line.split()
+        wavelengths.append(float(data[0]))
+        spectrum.append(float(data[1]))
+    infile.close()
+    return (np.array(wavelengths), np.array(spectrum))
