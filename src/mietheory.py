@@ -98,7 +98,7 @@ def function_value(an, bn, xin_x, xin_der_x, phi_theta):
 
 def ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n=1.0):
     upper_x = 2 * math.pi * medium_n * particle_size
-    print(particle_size, ": 0.0 %", end='\r', flush=True)
+    #print(particle_size, ": 0.0 %", end='\r', flush=True)
     for j in range(len(wavelengths)):
         #print(wavelengths[j])
         x = upper_x / wavelengths[j]
@@ -129,8 +129,8 @@ def ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, 
 
         spefun(j, xin_x, xin_der_x, an, bn)
 
-        print(particle_size, ":", float(int(j / len(wavelengths) * 1000)) / 10, " %", end='\r', flush=True)
-    print(particle_size, ": 100.0 %", flush=True)
+        #print(particle_size, ":", float(int(j / len(wavelengths) * 1000)) / 10, " %", end='\r', flush=True)
+    #print(particle_size, ": 100.0 %", flush=True)
 
 def ccs_surface_generic(partsizes, spefun):
     res = []
@@ -160,56 +160,56 @@ def ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len):
 
     medium_n = 1.0
 
-    res_csa = np.zeros(len(wavelengths), dtype=float)
+    res_sca = np.zeros(len(wavelengths), dtype=float)
     res_ext = np.zeros(len(wavelengths), dtype=float)
-    res_csa_an = np.zeros(len(wavelengths), dtype=float)
-    res_csa_bn = np.zeros(len(wavelengths), dtype=float)
+    res_sca_an = np.zeros(len(wavelengths), dtype=float)
+    res_sca_bn = np.zeros(len(wavelengths), dtype=float)
     res_ext_an = np.zeros(len(wavelengths), dtype=float)
     res_ext_bn = np.zeros(len(wavelengths), dtype=float)
 
     def spefun(j, xin_x, xin_der_x, an, bn):
         mul = (wavelengths[j] / medium_n)**2 / (2 * math.pi) / (particle_size**2 * math.pi)
-        part_res_csa = [0] * order_len
+        part_res_sca = [0] * order_len
         part_res_ext = [0] * order_len
-        part_res_csa_an = [0] * order_len
-        part_res_csa_bn = [0] * order_len
+        part_res_sca_an = [0] * order_len
+        part_res_sca_bn = [0] * order_len
         part_res_ext_an = [0] * order_len
         part_res_ext_bn = [0] * order_len
         for i in range(1, order_len):
-            part_res_csa_an[i] = (2 * i + 1) * (an[i].real**2 + an[i].imag**2)
-            part_res_csa_bn[i] = (2 * i + 1) * (bn[i].real**2 + bn[i].imag**2)
+            part_res_sca_an[i] = (2 * i + 1) * (an[i].real**2 + an[i].imag**2)
+            part_res_sca_bn[i] = (2 * i + 1) * (bn[i].real**2 + bn[i].imag**2)
             part_res_ext_an[i] = (2 * i + 1) * an[i].real
             part_res_ext_bn[i] = (2 * i + 1) * bn[i].real
-            part_res_csa[i] = part_res_csa_an[i] + part_res_csa_bn[i]
+            part_res_sca[i] = part_res_sca_an[i] + part_res_sca_bn[i]
             part_res_ext[i] = part_res_ext_an[i] + part_res_ext_bn[i]
-        res_csa_an[j] = mul * sum(part_res_csa_an)
-        res_csa_bn[j] = mul * sum(part_res_csa_bn)
+        res_sca_an[j] = mul * sum(part_res_sca_an)
+        res_sca_bn[j] = mul * sum(part_res_sca_bn)
         res_ext_an[j] = mul * sum(part_res_ext_an)
         res_ext_bn[j] = mul * sum(part_res_ext_bn)
-        res_csa[j] = mul * sum(part_res_csa)
+        res_sca[j] = mul * sum(part_res_sca)
         res_ext[j] = mul * sum(part_res_ext)
 
     ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n)
-    return (res_csa, res_ext, res_csa_an, res_csa_bn, res_ext_an, res_ext_bn)
+    return (res_sca, res_ext, res_sca_an, res_sca_bn, res_ext_an, res_ext_bn)
 
 def ccs_exact_surface(ref_indices_raw, wavelengths, partsizes, order_len):
-    csa = np.zeros((len(partsizes), len(wavelengths)))
+    sca = np.zeros((len(partsizes), len(wavelengths)))
     ext = np.zeros((len(partsizes), len(wavelengths)))
-    csa_an = np.zeros((len(partsizes), len(wavelengths)))
-    csa_bn = np.zeros((len(partsizes), len(wavelengths)))
+    sca_an = np.zeros((len(partsizes), len(wavelengths)))
+    sca_bn = np.zeros((len(partsizes), len(wavelengths)))
     ext_an = np.zeros((len(partsizes), len(wavelengths)))
     ext_bn = np.zeros((len(partsizes), len(wavelengths)))
     def spefun(index):
         res = ccs_exact(ref_indices_raw, wavelengths, partsizes[index], order_len)
-        csa[index] = res[0]
+        sca[index] = res[0]
         ext[index] = res[1]
-        csa_an[index] = res[2]
-        csa_bn[index] = res[3]
+        sca_an[index] = res[2]
+        sca_bn[index] = res[3]
         ext_an[index] = res[4]
         ext_bn[index] = res[5]
     
     ccs_surface_generic(partsizes, spefun)
-    return (csa, ext, csa_an, csa_bn, ext_an, ext_bn)
+    return (sca, ext, sca_an, sca_bn, ext_an, ext_bn)
 
 # NORMAL INTEGRATION
 
@@ -233,11 +233,11 @@ def ccs_integ(ref_indices_raw, wavelengths, particle_size, phi_inf, phi_sup, the
     return res
 
 def ccs_integ_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len):
-    csa = np.zeros((len(partsizes), len(wavelengths)))
+    sca = np.zeros((len(partsizes), len(wavelengths)))
     def spefun(index):
-        csa[index] = ccs_integ(ref_indices_raw, wavelengths, partsizes[index], phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
+        sca[index] = ccs_integ(ref_indices_raw, wavelengths, partsizes[index], phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
     ccs_surface_generic(partsizes, spefun)
-    return csa
+    return sca
 
 # INTEGRATION BY TRIANGLE
 
@@ -272,8 +272,8 @@ def ccs_integ_triangle(ref_indices_raw, wavelengths, particle_size, point_coords
     return res
 
 def ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, point_coords, indices, order_len):
-    csa = np.zeros((len(partsizes), len(wavelengths)))
+    sca = np.zeros((len(partsizes), len(wavelengths)))
     def spefun(index):
-        csa[index] = ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[index], point_coords, indices, order_len)
+        sca[index] = ccs_integ_triangle(ref_indices_raw, wavelengths, partsizes[index], point_coords, indices, order_len)
     ccs_surface_generic(partsizes, spefun)
-    return csa
+    return sca
