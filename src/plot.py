@@ -4,8 +4,6 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 import numpy as np
 import inout
-import threading
-import multiprocessing
 
 def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output_filename):
     res = mietheory.ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len)
@@ -73,7 +71,7 @@ def integ_sca_by_triangle(ref_indices_raw, wavelengths, particle_size, order_len
 
 def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsizes, order_len, filename, output_filename):
     data = inout.load_selected_triangle(filename)
-    scattering_cross_section[index] = mietheory.ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, data[0], data[1], order_len)
+    scattering_cross_section = mietheory.ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
     ax0.set_title("Scattering Cross Section")

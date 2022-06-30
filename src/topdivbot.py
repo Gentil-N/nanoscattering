@@ -2,18 +2,23 @@ import plot
 import inout
 import numpy as np
 import math
-import time
-import sys
 import mietheory
+from matplotlib import pyplot as plt
+from matplotlib.cm import ScalarMappable
+from matplotlib.colors import Normalize
 
 REF_INDICES_RAW = inout.load_ref_index("./res/refractive-index-silicon-2.csv")
-WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 500)
-PARTSIZES = np.linspace(95e-9, 99e-9, 5)
+WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 100)
+PARTSIZES = np.linspace(98e-9, 99e-9, 2)
 
 data_top = inout.load_selected_triangle("./res/top-medium.ply")
-sca_top[index] = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data_top[0], data_top[1], 3 + 1)
+sca_top = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data_top[0], data_top[1], 3 + 1)
 data_bottom = inout.load_selected_triangle("./res/bottom-medium.ply")
-sca_bottom[index] = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data_bottom[0], data_botto[1], 3 + 1)
+sca_bottom = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data_bottom[0], data_bottom[1], 3 + 1)
+#res = np.zeros((len(PARTSIZES), len(WAVELENGTHS)))
+#for i in range(len(PARTSIZES)):
+#    for j in range(len(WAVELENGTHS)):
+#       res[i][j] = sca_top[i][j] / sca_bottom[i][j]
 res = sca_top / sca_bottom
 fig0 = plt.figure(num=0)
 ax0 = fig0.subplots(nrows=1, ncols=1)
