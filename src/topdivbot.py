@@ -8,8 +8,8 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
 REF_INDICES_RAW = inout.load_ref_index("./res/refractive-index-silicon-2.csv")
-WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 100)
-PARTSIZES = np.linspace(98e-9, 99e-9, 2)
+WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 500)
+PARTSIZES = np.linspace(50e-9, 99e-9, 50)
 
 data_top = inout.load_selected_triangle("./res/top-medium.ply")
 sca_top = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data_top[0], data_top[1], 3 + 1)
