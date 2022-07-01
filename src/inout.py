@@ -81,7 +81,17 @@ def show_plot(filename):
 def export_spectrum(wavelengths, spectrum, filename):
     outfile = open(filename, 'w')
     for i in range(len(wavelengths)):
-        outfile.write(str(wavelengths[i]) + "\t" + spectrum[i])
+        outfile.write(str(wavelengths[i]) + "\t" + str(spectrum[i]) + "\n")
+    outfile.close()
+
+def export_surface(wavelengths, partsizes, surface, filename):
+    outfile = open(filename, 'w')
+    for i in range(len(wavelengths)):
+        outfile.write(str(wavelengths[i]) + "\n")
+    for i in range(len(partsizes)):
+        outfile.write("#\t" + str(partsizes[i]) + "\n")
+        for j in range(len(wavelengths)):
+            outfile.write(str(surface[i][j]) + "\n")
     outfile.close()
 
 def import_spectrum(filename):
@@ -95,3 +105,30 @@ def import_spectrum(filename):
         spectrum.append(float(data[1]))
     infile.close()
     return (np.array(wavelengths), np.array(spectrum))
+
+def import_surface(filename):
+    wavelengths = []
+    partsizes = []
+    surface = []
+    infile = open(filename, 'r')
+    lines = infile.readlines()
+    first_partsize = 0
+    for i in range(len(lines)):
+        data = lines[i].split()
+        if data[0] == "#":
+            first_partsize = i
+            partsizes.append(float(data[1]))
+            break
+        else:
+            wavelengths.append(float(data[0]))
+    local_spectrum = []
+    for i in range(first_partsize + 1, len(lines)):
+        data = lines[i].split()
+        if data[0] == "#":
+            partsizes.append(float(data[1]))
+            surface.append(local_spectrum.copy())
+            local_spectrum = []
+        else:
+            local_spectrum.append(float(data[0]))
+    surface.append(local_spectrum.copy())
+    return (np.array(wavelengths), np.array(partsizes), np.array(surface))
