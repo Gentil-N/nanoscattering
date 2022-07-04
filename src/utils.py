@@ -1,5 +1,6 @@
 import math
 import cmath
+import numpy as np
 
 def trapz(func, inf, sup, div):
     step = (sup - inf) / div
@@ -149,3 +150,37 @@ def volume_triangle(phi_theta_1, phi_theta_2, phi_theta_3, res1, res2, res3):
             return sign3 * volume_varying(phi_theta_2, phi_theta_1, phi_theta_3, abs(res2), abs(res1), abs(res3))
     else:
         return  sign1 * volume_varying(phi_theta_3, phi_theta_1, phi_theta_2, abs(res3), abs(res1), abs(res2))
+
+def linear_interpolation(x0, y0, x1, y1, x):
+    a = (y1 - y0) / (x1 - x0)
+    b = y0 - a * x0
+    return a * x + b
+
+def redistribute(x, y, new_x):
+    new_y = [0] * len(new_x)
+    curr_old_x_index = 0
+    for i in range(len(new_x)):
+        first_test = (x[curr_old_x_index] <= new_x[i])
+        second_test = (x[curr_old_x_index + 1] >= new_x[i])
+        if first_test and second_test:
+            new_y[i] = linear_interpolation(x[curr_old_x_index], y[curr_old_x_index], x[curr_old_x_index + 1], y[curr_old_x_index + 1], new_x[i])
+        elif (not second_test) and curr_old_x_index < len(x) - 2:
+            while curr_old_x_index < len(x) - 2 and x[curr_old_x_index + 1] <= new_x[i]:
+                curr_old_x_index += 1
+            new_y[i] = linear_interpolation(x[curr_old_x_index], y[curr_old_x_index], x[curr_old_x_index + 1], y[curr_old_x_index + 1], new_x[i])
+    return new_y
+
+def restrain(x, y, x_min, x_max):
+    new_x = []
+    new_y = []
+    for i in range(len(x)):
+        if x_min <= x[i] <= x_max:
+            new_x.append(x[i])
+            new_y.append(y[i])
+    return (new_x, new_y)
+
+def rescale(reference, torescale):
+    average_reference = sum(reference) / len(reference)
+    average_torescale = sum(torescale) / len(torescale)
+    alpha = average_reference / average_torescale
+    return np.array(torescale) * alpha

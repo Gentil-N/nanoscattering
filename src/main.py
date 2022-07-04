@@ -2,7 +2,6 @@ import plot
 import inout
 import numpy as np
 import math
-from scipy import stats
 
 REF_INDICES_RAW = inout.load_ref_index("./res/refractive-index-silicon-2.csv")
 WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 100)
