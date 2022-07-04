@@ -98,7 +98,7 @@ def function_value(an, bn, xin_x, xin_der_x, phi_theta):
 
 def ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, medium_n=1.0):
     upper_x = 2 * math.pi * medium_n * particle_size
-    print(particle_size, ": 0.0 %", end='\r', flush=True)
+    #print(particle_size, ": 0.0 %", end='\r', flush=True)
     for j in range(len(wavelengths)):
         #print(wavelengths[j])
         x = upper_x / wavelengths[j]
@@ -129,8 +129,8 @@ def ccs_generic(ref_indices_raw, wavelengths, particle_size, spefun, order_len, 
 
         spefun(j, xin_x, xin_der_x, an, bn)
 
-        print(particle_size, ":", float(int(j / len(wavelengths) * 1000)) / 10, " %", end='\r', flush=True)
-    print(particle_size, ": 100.0 %", flush=True)
+        #print(particle_size, ":", float(int(j / len(wavelengths) * 1000)) / 10, " %", end='\r', flush=True)
+    #print(particle_size, ": 100.0 %", flush=True)
 
 def ccs_surface_generic(partsizes, spefun):
     res = []

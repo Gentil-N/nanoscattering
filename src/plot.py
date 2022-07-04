@@ -48,15 +48,13 @@ def integ_sca(ref_indices_raw, wavelengths, particle_size, phi_inf, phi_sup, the
     inout.show_plot(output_filename)
 
 def integ_sca_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len, output_filename):
-    #scattering_cross_section = mietheory.ccs_integ_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
-    res = inout.import_surface("./output/surface")
+    scattering_cross_section = mietheory.ccs_integ_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
     ax0.set_title("Scattering Cross Section")
-    ax0.contourf(res[0], res[1], res[2], cmap='inferno', levels=70)
+    ax0.contourf(wavelengths, partsize, scattering_cross_section, cmap='inferno', levels=70)
     ax0.set(xlabel="wavelength", ylabel="particle radius")
     fig0.colorbar(mappable=ScalarMappable(norm=Normalize(vmin=0, vmax=10), cmap='inferno'), ax=ax0)
-    #inout.export_surface(wavelengths, partsizes, scattering_cross_section, "./output/surface")
     inout.show_plot(output_filename)
 
 def integ_sca_by_triangle(ref_indices_raw, wavelengths, particle_size, order_len, filename, output_filename):
