@@ -149,7 +149,10 @@ def extract():
             global HMAX
             filename = fd.asksaveasfilename()
             restrained = utils.restrain(x, y, HMIN, HMAX)
-            inout.export_spectrum(restrained[0], restrained[1], filename)
+            spectrum = np.array(restrained[1])
+            spectrum -= spectrum[0]
+            print(" Level Substracted", spectrum[0], "...", end='', flush=True)
+            inout.export_spectrum(restrained[0], spectrum, filename)
 
         def on_select(hmin, hmax):
             global HMIN

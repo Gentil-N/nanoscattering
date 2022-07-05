@@ -3,6 +3,7 @@ from collada import *
 import utils
 import numpy as np
 from matplotlib import pyplot as plt
+import sys
 
 INTERACTIVE_ENV=True
 
@@ -50,7 +51,7 @@ def load_selected_triangle(filename):
                 indices.append(face[0][0])
     #print(len(point_coords))
     #print(len(indices))
-    #export_collada(point_coords, indices, "./output/test.dae")
+    #export_collada(point_coords, indices, "./output/" + filename + ".dae")
     return (point_coords, indices)
 
 def export_collada(point_coords, indices, filename):
@@ -132,3 +133,6 @@ def import_surface(filename):
             local_spectrum.append(float(data[0]))
     surface.append(local_spectrum.copy())
     return (np.array(wavelengths), np.array(partsizes), np.array(surface))
+
+def get_input_args():
+    return sys.argv[1:]

@@ -1,6 +1,8 @@
 import math
 import cmath
 import numpy as np
+from scipy import integrate
+import sys
 
 def trapz(func, inf, sup, div):
     step = (sup - inf) / div
@@ -184,3 +186,34 @@ def rescale(reference, torescale):
     average_torescale = sum(torescale) / len(torescale)
     alpha = average_reference / average_torescale
     return np.array(torescale) * alpha
+
+def rescale_by_area(reference, torescale):
+    ref_area = integrate.trapezoid(y=reference)
+    sca_area = integrate.trapezoid(y=torescale)
+    alpha = ref_area / sca_area
+    return np.array(torescale) * alpha
+
+def remove_negative(y):
+    """
+    Remove all negative values (by setting those to zero) from a list 'y'
+    """
+    new_y = np.array(y)
+    for i in range(len(new_y)):
+        if new_y[i] < 0:
+            new_y[i] = 0.0
+    return new_y
+
+def find_matching(surface, spectrum):
+    min_integ = 1e10
+    index = 0
+    res_spec = None
+    for i in range(len(surface[2])):
+        theo_spec = remove_negative(surface[2][i])
+        rescaled_spec = rescale_by_area(theo_spec, redistribute(spectrum[0], spectrum[1], surface[0]))
+        diff = abs(theo_spec - rescaled_spec)
+        integ = integrate.trapezoid(diff)
+        if integ < min_integ:
+            min_integ = integ
+            index = i
+            res_spec = rescaled_spec
+    return (index, res_spec)
