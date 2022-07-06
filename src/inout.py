@@ -8,6 +8,9 @@ import sys
 INTERACTIVE_ENV=True
 
 def load_ref_index(filename):
+    """
+    Load a refractive index file returning a list of (wavelength, real part, imaginary part)
+    """
     ref_file = open(filename, 'r')
     lines = ref_file.readlines()
     data = []
@@ -18,6 +21,9 @@ def load_ref_index(filename):
     return data
 
 def load_selected_triangle(filename):
+    """
+    Load a 'ply' file with all colorized (not white) triangles returning (spherical coordinates phi & theta, indices) 
+    """
     data = pf.PlyData.read(filename)
     point_coords = []
     for vertex in data.elements[0]:
@@ -55,6 +61,9 @@ def load_selected_triangle(filename):
     return (point_coords, indices)
 
 def export_collada(point_coords, indices, filename):
+    """
+    Export a mesh with a 'spherical coordinate' structure to collada format
+    """
     mesh = Collada()
     vertices = []
     for coord in point_coords:
@@ -80,12 +89,18 @@ def show_plot(filename):
     plt.show()
 
 def export_spectrum(wavelengths, spectrum, filename):
+    """
+    Export a spectrum given by 'f(wavelengths)=spectrum'
+    """
     outfile = open(filename, 'w')
     for i in range(len(wavelengths)):
         outfile.write(str(wavelengths[i]) + "\t" + str(spectrum[i]) + "\n")
     outfile.close()
 
 def export_surface(wavelengths, partsizes, surface, filename):
+    """
+    Export a surface given by 'f(wavelengths, partsizes)=surface'
+    """
     outfile = open(filename, 'w')
     for i in range(len(wavelengths)):
         outfile.write(str(wavelengths[i]) + "\n")
@@ -96,6 +111,9 @@ def export_surface(wavelengths, partsizes, surface, filename):
     outfile.close()
 
 def import_spectrum(filename):
+    """
+    Reciprocal from spectrum exporter
+    """
     wavelengths = []
     spectrum = []
     infile = open(filename, 'r')
@@ -108,6 +126,9 @@ def import_spectrum(filename):
     return (np.array(wavelengths), np.array(spectrum))
 
 def import_surface(filename):
+    """
+    Reciprocal from surface exporter
+    """
     wavelengths = []
     partsizes = []
     surface = []

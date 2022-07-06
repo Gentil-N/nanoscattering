@@ -5,6 +5,9 @@ from scipy import integrate
 import sys
 
 def trapz(func, inf, sup, div):
+    """
+    Integrate a function 'func(x)=y' from 'inf' to 'sup' with a number of chunck given by 'div': dx = (sup - inf) / div
+    """
     step = (sup - inf) / div
     res = 0
     for i in range(div):
@@ -14,18 +17,30 @@ def trapz(func, inf, sup, div):
     return res
 
 def distance(point1, point2):
+    """
+    Return the Euclidian distance between 'point1' and 'point2'
+    """
     return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
 
 def clamp(val, mmin, mmax):
+    """
+    Return a value 'val' clamped between 'mmin' and 'mmax'
+    """
     return max(min(val, mmax), mmin)
 
 def sign(val):
+    """
+    Return the sign of a value 'val'
+    """
     if val < 0:
         return -1
     else:
         return 1
 
 def transform_cartesian_to_spherical_angles(x, y, z):
+    """
+    Return (phi, theta)
+    """
     r = math.sqrt(x**2 + y**2 + z**2)
     cos_theta = z / r
     theta = math.acos(cos_theta)
@@ -43,14 +58,23 @@ def transform_cartesian_to_spherical_angles(x, y, z):
         return (0.0, theta)
 
 def is_white(r, g, b):
+    """
+    Test if RBG corresponds to a white color
+    """
     return (r == 255 and g == 255 and b == 255)
 
 def triangle_has_no_white(vert_0, vert_1, vert_2):
+    """
+    Test if vert_0, vert_1 or vert_2 is not white
+    """
     if not(is_white(vert_0[3], vert_0[4], vert_0[5])) and not(is_white(vert_1[3], vert_1[4], vert_1[5])) and not(is_white(vert_2[3],vert_2[4], vert_2[5])):
         return True
     return False
 
 def get_ref_index(data, wavelength):
+    """
+    Return interpolated refractive index from 'data' for a given 'wavelength'
+    """
     for i in range(len(data) - 1):
         if data[i][0] <= wavelength and data[i + 1][0] >= wavelength:
             alpha_re = (data[i + 1][1] - data[i][1]) / (data[i + 1][0] - data[i][0])
@@ -63,6 +87,9 @@ def get_ref_index(data, wavelength):
     return complex(data[0][1], data[0][2])
 
 def volume_uniform(phi_theta_1, phi_theta_2, phi_theta_3, res1, res2, res3):
+    """
+    Compute the 3D volume for res1, res2 and res3 positives
+    """
     a = 0
     b = 0
     c = 0
@@ -121,6 +148,9 @@ def volume_uniform(phi_theta_1, phi_theta_2, phi_theta_3, res1, res2, res3):
     return (v1 + v2)
 
 def volume_varying(phi_theta_1, phi_theta_2, phi_theta_3, d1, d2, d3):
+    """
+    Compute the 3D volume for d1, d2 and d3 different from their sign
+    """
     c1 = distance(phi_theta_1, phi_theta_3)
     c2 = distance(phi_theta_1, phi_theta_2)
     c3 = distance(phi_theta_2, phi_theta_3)
@@ -140,6 +170,9 @@ def volume_varying(phi_theta_1, phi_theta_2, phi_theta_3, d1, d2, d3):
     return -v1 + v2 + v3
 
 def volume_triangle(phi_theta_1, phi_theta_2, phi_theta_3, res1, res2, res3):
+    """
+    Compute the 3D volume
+    """
     sign1 = sign(res1)
     sign2 = sign(res2)
     sign3 = sign(res3)
@@ -154,11 +187,17 @@ def volume_triangle(phi_theta_1, phi_theta_2, phi_theta_3, res1, res2, res3):
         return  sign1 * volume_varying(phi_theta_3, phi_theta_1, phi_theta_2, abs(res3), abs(res1), abs(res2))
 
 def linear_interpolation(x0, y0, x1, y1, x):
+    """
+    Return interpolated y for x between (x0, y0) and (x1, y1)
+    """
     a = (y1 - y0) / (x1 - x0)
     b = y0 - a * x0
     return a * x + b
 
 def redistribute(x, y, new_x):
+    """
+    Return 'new_y' corresponding to 'y' according to the new distribution given by 'new_x'
+    """
     new_y = [0] * len(new_x)
     curr_old_x_index = 0
     for i in range(len(new_x)):
@@ -173,6 +212,9 @@ def redistribute(x, y, new_x):
     return new_y
 
 def restrain(x, y, x_min, x_max):
+    """
+    Pull outised values out from 'x' and 'y'
+    """
     new_x = []
     new_y = []
     for i in range(len(x)):
@@ -182,12 +224,18 @@ def restrain(x, y, x_min, x_max):
     return (new_x, new_y)
 
 def rescale(reference, torescale):
+    """
+    Rescale 'torescale' list according the average value given by 'reference': 'torescale' is going to have the same average than 'reference'
+    """
     average_reference = sum(reference) / len(reference)
     average_torescale = sum(torescale) / len(torescale)
     alpha = average_reference / average_torescale
     return np.array(torescale) * alpha
 
 def rescale_by_area(reference, torescale):
+    """
+    Rescale 'torescale' list according the area value given by 'reference': 'torescale' is going to have the same area than 'reference'
+    """
     ref_area = integrate.trapezoid(y=reference)
     sca_area = integrate.trapezoid(y=torescale)
     alpha = ref_area / sca_area
@@ -204,6 +252,9 @@ def remove_negative(y):
     return new_y
 
 def find_matching(surface, spectrum):
+    """
+    Return the closest index in 'surface' corresponding to 'spectrum'
+    """
     min_integ = 1e10
     index = 0
     res_spec = None

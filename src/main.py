@@ -4,8 +4,8 @@ import numpy as np
 import math
 
 REF_INDICES_RAW = inout.load_ref_index("./res/refractive-index-silicon-visible")
-WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 100)
-PARTSIZES = np.linspace(50e-9, 99e-9, 50)
+WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 200)
+PARTSIZES = np.linspace(50e-9, 99e-9, 100)
 
 plot.exact_sca_ext(REF_INDICES_RAW, WAVELENGTHS, 80e-9, 3 + 1, "./output/exact_sca_ext.png")
 plot.exact_sca_ext_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, 3 + 1, "./output/exact_sca_ext_surface.png")

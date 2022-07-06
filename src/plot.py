@@ -6,6 +6,9 @@ import numpy as np
 import inout
 
 def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output_filename):
+    """
+    Plot exact scattering and extinction cross sections
+    """
     res = mietheory.ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
@@ -19,6 +22,9 @@ def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output
     inout.show_plot(output_filename)
 
 def exact_sca_ext_surface(ref_indices_raw, wavelengths, partsizes, order_len, output_filename):
+    """
+    Plot exact scattering and extinction cross sections for a set of particle size
+    """
     res = mietheory.ccs_exact_surface(ref_indices_raw, wavelengths, partsizes, order_len)
     scattering_cross_section = res[0]
     extinction_cross_section = res[1]
@@ -37,6 +43,9 @@ def exact_sca_ext_surface(ref_indices_raw, wavelengths, partsizes, order_len, ou
     inout.show_plot(output_filename)
 
 def integ_sca(ref_indices_raw, wavelengths, particle_size, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len, output_filename):
+    """
+    Plot integrated scattering and extinction cross sections
+    """
     res0 = mietheory.ccs_integ(ref_indices_raw, wavelengths, particle_size, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
@@ -48,6 +57,9 @@ def integ_sca(ref_indices_raw, wavelengths, particle_size, phi_inf, phi_sup, the
     inout.show_plot(output_filename)
 
 def integ_sca_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len, output_filename):
+    """
+    Plot integrated scattering and extinction cross sections for a set of particle size
+    """
     scattering_cross_section = mietheory.ccs_integ_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup, theta_inf, theta_sup, integ_point_count, order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
@@ -58,6 +70,9 @@ def integ_sca_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup,
     inout.show_plot(output_filename)
 
 def integ_sca_by_triangle(ref_indices_raw, wavelengths, particle_size, order_len, filename, output_filename):
+    """
+    Plot integrated scattering and extinction cross sections with the 'triangle method'
+    """
     data = inout.load_selected_triangle(filename)
     res0 = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, particle_size, data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
@@ -70,6 +85,9 @@ def integ_sca_by_triangle(ref_indices_raw, wavelengths, particle_size, order_len
     inout.show_plot(output_filename)
 
 def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsizes, order_len, filename, output_filename):
+    """
+    Plot integrated scattering and extinction cross sections with the 'triangle method' for a set of particle size
+    """
     data = inout.load_selected_triangle(filename)
     scattering_cross_section = mietheory.ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
