@@ -22,6 +22,12 @@ def distance(point1, point2):
     """
     return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
 
+def distance3d(point1, point2):
+    """
+    Return the Euclidian distance (in 3d) between 'point1' and 'point2'
+    """
+    return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2 + (point1[2] - point2[2])**2)
+
 def clamp(val, mmin, mmax):
     """
     Return a value 'val' clamped between 'mmin' and 'mmax'
@@ -56,6 +62,18 @@ def transform_cartesian_to_spherical_angles(x, y, z):
         return (-math.pi / 2, theta)
     else:
         return (0.0, theta)
+
+def is_inside_sphere(center, radius, point):
+    """
+    Test if point is inside the sphere defined by 'center' and 'radius
+    """
+    return distance3d(center, point) <= radius
+
+def triangle_is_inside_sphere(center, radius, vert_0, vert_1, vert_2):
+    """
+    Test if vert_0, vert_1 then vert_2 are inside the sphere defined by 'center' and 'radius
+    """
+    return is_inside_sphere(center, radius, (vert_0[0], vert_0[1], vert_0[2])) and is_inside_sphere(center, radius, (vert_1[0], vert_1[1], vert_1[2])) and is_inside_sphere(center, radius, (vert_2[0], vert_2[1], vert_2[2]))
 
 def is_white(r, g, b):
     """

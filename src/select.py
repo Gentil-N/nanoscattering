@@ -150,8 +150,9 @@ def extract():
             filename = fd.asksaveasfilename()
             restrained = utils.restrain(x, y, HMIN, HMAX)
             spectrum = np.array(restrained[1])
-            spectrum -= spectrum[0]
-            print(" Level Substracted", spectrum[0], "...", end='', flush=True)
+            sub = spectrum[0]
+            print(" Level Substracted", sub, "...", end='', flush=True)
+            spectrum -= sub
             inout.export_spectrum(restrained[0], spectrum, filename)
 
         def on_select(hmin, hmax):

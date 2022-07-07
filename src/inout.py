@@ -4,6 +4,8 @@ import utils
 import numpy as np
 from matplotlib import pyplot as plt
 import sys
+import math
+import os
 
 INTERACTIVE_ENV=True
 
@@ -20,9 +22,9 @@ def load_ref_index(filename):
     ref_file.close()
     return data
 
-def load_selected_triangle(filename):
+def load_triangle_by_color(filename):
     """
-    Load a 'ply' file with all colorized (not white) triangles returning (spherical coordinates phi & theta, indices) 
+    Load a 'ply' file with all colorized (not white) triangles returning spherical coordinates (phi & theta, indices) 
     """
     data = pf.PlyData.read(filename)
     point_coords = []
@@ -57,7 +59,54 @@ def load_selected_triangle(filename):
                 indices.append(face[0][0])
     #print(len(point_coords))
     #print(len(indices))
-    #export_collada(point_coords, indices, "./output/" + filename + ".dae")
+    #export_collada(point_coords, indices, "./output/" + os.path.basename(filename) + ".dae")
+    return (point_coords, indices)
+
+def load_triangle_by_angle(filename, na, ni):
+    """
+    Load a 'ply' file with triangles (included in collection angles) returning spherical coordinates (phi & theta, indices) 
+    """
+    data = pf.PlyData.read(filename)
+    point_coords = []
+    #vertices = []
+    radius = math.sin(na)
+    c = math.cos(na)
+    center = (c * math.sin(ni), 0.0, -c * math.cos(ni))
+    for vertex in data.elements[0]:
+        if utils.is_inside_sphere(center, radius, (vertex[0], vertex[1], vertex[2])):
+            #vertices.append((vertex[0], vertex[1], vertex[2]))
+            point_coords.append(utils.transform_cartesian_to_spherical_angles(vertex[0], vertex[1], vertex[2]))
+        else:
+            #vertices.append((7.7, 7.7, 7.7))
+            point_coords.append((7.7, 7.7))
+    indices = []
+    #print(len(data.elements[1]))
+    for face in data.elements[1]:
+        if len(face[0]) == 3:
+            vert_0 = data.elements[0][face[0][0]]
+            vert_1 = data.elements[0][face[0][1]]
+            vert_2 = data.elements[0][face[0][2]]
+            if utils.triangle_is_inside_sphere(center, radius, vert_0, vert_1, vert_2):
+                indices.append(face[0][0])
+                indices.append(face[0][1])
+                indices.append(face[0][2])
+        elif len(face[0]) == 4:
+            vert_0 = data.elements[0][face[0][0]]
+            vert_1 = data.elements[0][face[0][1]]
+            vert_2 = data.elements[0][face[0][2]]
+            vert_3 = data.elements[0][face[0][3]]
+            if utils.triangle_is_inside_sphere(center, radius, vert_0, vert_1, vert_2):
+                indices.append(face[0][0])
+                indices.append(face[0][1])
+                indices.append(face[0][2])
+            if utils.triangle_is_inside_sphere(center, radius, vert_2, vert_3, vert_0):
+                indices.append(face[0][2])
+                indices.append(face[0][3])
+                indices.append(face[0][0])
+    #print(len(point_coords))
+    #print(len(indices))
+    #export_collada(point_coords, indices, "./output/" + os.path.basename(filename) + ".dae")
+    #export_collada_3D(vertices, indices, "./output/" + os.path.basename(filename) + ".dae")
     return (point_coords, indices)
 
 def export_collada(point_coords, indices, filename):
@@ -70,6 +119,25 @@ def export_collada(point_coords, indices, filename):
         vertices.append(coord[0])
         vertices.append(coord[1])
         vertices.append(0.0)
+    vert_src = source.FloatSource("cubeverts-array", np.array(vertices), ('X', 'Y', 'Z'))
+    geom = geometry.Geometry(mesh, "geometry0", "mycube", [vert_src])
+    input_list = source.InputList()
+    input_list.addInput(0, 'VERTEX', "#cubeverts-array")
+    triset = geom.createTriangleSet(np.array(indices), input_list, "materialref")
+    geom.primitives.append(triset)
+    mesh.geometries.append(geom)
+    geomnode = scene.GeometryNode(geom)
+    node = scene.Node("node0", children=[geomnode])
+    myscene = scene.Scene("myscene", [node])
+    mesh.scenes.append(myscene)
+    mesh.scene = myscene
+    mesh.write(filename)
+
+def export_collada_3D(vertices, indices, filename):
+    """
+    Export a mesh with a 'spherical coordinate' structure to collada format
+    """
+    mesh = Collada()
     vert_src = source.FloatSource("cubeverts-array", np.array(vertices), ('X', 'Y', 'Z'))
     geom = geometry.Geometry(mesh, "geometry0", "mycube", [vert_src])
     input_list = source.InputList()

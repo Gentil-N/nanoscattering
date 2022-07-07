@@ -11,9 +11,9 @@ REF_INDICES_RAW = inout.load_ref_index("./res/refractive-index-silicon-visible")
 WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 200)
 PARTSIZES = np.linspace(50e-9, 99e-9, 100)
 
-data_top = inout.load_selected_triangle("./res/top-medium.ply")
+data_top = inout.load_triangle_by_color("./res/top-medium.ply")
 sca_top = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data_top[0], data_top[1], 3 + 1)
-data_bottom = inout.load_selected_triangle("./res/bottom-medium.ply")
+data_bottom = inout.load_triangle_by_color("./res/bottom-medium.ply")
 sca_bottom = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data_bottom[0], data_bottom[1], 3 + 1)
 #res = np.zeros((len(PARTSIZES), len(WAVELENGTHS)))
 #for i in range(len(PARTSIZES)):

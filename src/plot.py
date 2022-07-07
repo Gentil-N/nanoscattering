@@ -69,11 +69,11 @@ def integ_sca_surface(ref_indices_raw, wavelengths, partsizes, phi_inf, phi_sup,
     fig0.colorbar(mappable=ScalarMappable(norm=Normalize(vmin=0, vmax=10), cmap='inferno'), ax=ax0)
     inout.show_plot(output_filename)
 
-def integ_sca_by_triangle(ref_indices_raw, wavelengths, particle_size, order_len, filename, output_filename):
+def integ_sca_by_colored_triangle(ref_indices_raw, wavelengths, particle_size, order_len, filename, output_filename):
     """
     Plot integrated scattering and extinction cross sections with the 'triangle method'
     """
-    data = inout.load_selected_triangle(filename)
+    data = inout.load_triangle_by_color(filename)
     res0 = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, particle_size, data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
@@ -84,11 +84,40 @@ def integ_sca_by_triangle(ref_indices_raw, wavelengths, particle_size, order_len
     ax0.grid()
     inout.show_plot(output_filename)
 
-def integ_sca_surface_by_triangle(ref_indices_raw, wavelengths, partsizes, order_len, filename, output_filename):
+def integ_sca_surface_by_colored_triangle(ref_indices_raw, wavelengths, partsizes, order_len, filename, output_filename):
     """
     Plot integrated scattering and extinction cross sections with the 'triangle method' for a set of particle size
     """
-    data = inout.load_selected_triangle(filename)
+    data = inout.load_triangle_by_color(filename)
+    scattering_cross_section = mietheory.ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, data[0], data[1], order_len)
+    fig0 = plt.figure(num=0)
+    ax0 = fig0.subplots(nrows=1, ncols=1)
+    ax0.set_title("Scattering Cross Section")
+    ax0.contourf(wavelengths, partsizes, scattering_cross_section, cmap='inferno', levels=70)
+    ax0.set(xlabel="wavelength", ylabel="particle radius")
+    fig0.colorbar(mappable=ScalarMappable(norm=Normalize(vmin=0, vmax=10), cmap='inferno'), ax=ax0)
+    inout.show_plot(output_filename)
+
+def integ_sca_by_angle_triangle(ref_indices_raw, wavelengths, particle_size, order_len, filename, na, ni, output_filename):
+    """
+    Plot integrated scattering and extinction cross sections with the 'triangle method'
+    """
+    data = inout.load_triangle_by_angle(filename, na, ni)
+    res0 = mietheory.ccs_integ_triangle(ref_indices_raw, wavelengths, particle_size, data[0], data[1], order_len)
+    fig0 = plt.figure(num=0)
+    ax0 = fig0.subplots(nrows=1, ncols=1)
+    ax0.set_title("Scattering Cross Sections")
+    ax0.plot(wavelengths, res0, label="Integrated")
+    ax0.set(xlabel="wavelength")
+    ax0.legend()
+    ax0.grid()
+    inout.show_plot(output_filename)
+
+def integ_sca_surface_by_angle_triangle(ref_indices_raw, wavelengths, partsizes, order_len, filename, na, ni, output_filename):
+    """
+    Plot integrated scattering and extinction cross sections with the 'triangle method' for a set of particle size
+    """
+    data = inout.load_triangle_by_angle(filename, na, ni)
     scattering_cross_section = mietheory.ccs_integ_triangle_surface(ref_indices_raw, wavelengths, partsizes, data[0], data[1], order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)

@@ -4,7 +4,7 @@ import utils
 from matplotlib import pyplot as plt
 import os
 
-files_spectrum = ["./res/spectrum-test-67nm"]
+files_spectrum = ["./res/spectrum-test-67nm", "./res/spectrum-test-72nm", "./res/spectrum-test-82nm"]
 
 data_surface = inout.import_surface("./res/surface-test")
 for filespec in files_spectrum:

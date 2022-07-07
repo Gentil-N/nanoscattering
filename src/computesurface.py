@@ -11,7 +11,7 @@ REF_INDICES_RAW = inout.load_ref_index("./res/refractive-index-silicon-visible")
 WAVELENGTHS = np.linspace(REF_INDICES_RAW[0][0], REF_INDICES_RAW[-1][0], 200)
 PARTSIZES = np.linspace(50e-9, 99e-9, 100)
 
-data = inout.load_selected_triangle("./res/disktest-high.ply")
+data = inout.load_triangle_by_color("./res/disktest-high.ply")
 scattering_cross_section = mietheory.ccs_integ_triangle_surface(REF_INDICES_RAW, WAVELENGTHS, PARTSIZES, data[0], data[1], 3 + 1)
 inout.export_surface(WAVELENGTHS, PARTSIZES, scattering_cross_section, "./output/surface-test")
 

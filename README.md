@@ -15,7 +15,7 @@ Before the previous command, this should must be run:
 ```shell
 module load python3
 ```
-otherwise ```python2.7``` is used with an old version of ```virtualenv```
+otherwise ```python2.7``` is used with an old version of ```virtualenv```.
 
 As a reminder, login is done through:
 ```shell
@@ -36,7 +36,7 @@ deactivate
 
 **About DTU Clusters**
 
-Each script has a specific launcher located into the ```dtu-hpc``` folder. For example, assuming a ```fake.py``` script is written into ```src```, a ```task_fake.sh``` file is created (see https://www.hpc.dtu.dk/?page_id=1416 for job's configuration) as well as ```launch_fake.sh``` file. The purpose of this last one is to erase the previous log files and execute the task file.
+Each script has a specific launcher located into the ```dtu-hpc``` folder. For example, assuming a ```fake.py``` script being written into ```src```, a ```task_fake.sh``` file is created (see https://www.hpc.dtu.dk/?page_id=1416 for job's configuration) as well as ```launch_fake.sh``` file. The purpose of this last one is to erase the previous log files and execute the task file.
 
 ## Scripts
 
@@ -50,8 +50,8 @@ A theoretical surface _f(wavelength, particle's size) = scattering cross section
 
 ### findradius.py
 
-A list of spectrum (exported from nanoparticles data) are compared to a theoretical surface previously computed in order to find the respective radius
+A list of spectrum (exported from nanoparticles data) are compared to a theoretical surface previously computed in order to find the respective radius.
 
 ### select.py
 
-Spectrum exporter. Should be run under a renderable environment (not cluster).
+Spectrum exporter. Should be run under a renderable environment (not on a cluster).
