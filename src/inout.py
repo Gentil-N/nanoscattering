@@ -59,7 +59,7 @@ def load_triangle_by_color(filename):
                 indices.append(face[0][0])
     #print(len(point_coords))
     #print(len(indices))
-    #export_collada(point_coords, indices, "./output/" + os.path.basename(filename) + ".dae")
+    export_collada(point_coords, indices, "./output/" + os.path.basename(filename) + ".dae")
     return (point_coords, indices)
 
 def load_triangle_by_angle(filename, na, ni):
