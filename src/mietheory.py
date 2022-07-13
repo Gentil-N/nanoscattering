@@ -142,7 +142,7 @@ def ccs_surface_generic(partsizes, spefun):
     threads = []
     for i in range(0, len(partsizes)):
         while len(threads) == max_cores:
-            #time.sleep(5)
+            time.sleep(5)
             for j in range(len(threads)):
                 if not threads[j].is_alive():
                     del threads[j]

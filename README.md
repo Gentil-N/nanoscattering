@@ -55,3 +55,9 @@ A list of spectrum (exported from nanoparticles data) are compared to a theoreti
 ### select.py
 
 Spectrum exporter. Should be run under a renderable environment (not on a cluster).
+
+- *Choose file*: Choose a file containing the spectrum data (exported from the optical microscope in ascii format with tab separations.
+- *Choose Bck-Ref*: Choose a background and a reference file (in this order!).
+- *Select Areas*: Select a vertical interesting areas (an average on the height will be computed) and click on *Add Selection*.
+- *Extract*: each selection is extracted and shown.
+    - If you want to extract the curve, select horizontally and click on *Save Spectrum*. Keep in mind that the first y-value (specified by the selection) will be removed from the whole curve in order to erase plateau.
