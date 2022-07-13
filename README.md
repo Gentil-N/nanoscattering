@@ -52,7 +52,7 @@ A theoretical surface _f(wavelength, particle's size) = scattering cross section
 
 A list of spectrum (exported from nanoparticles data) are compared to a theoretical surface previously computed in order to find the respective radius.
 
-### select.py
+### selection.py
 
 Spectrum exporter. Should be run under a renderable environment (not on a cluster).
 
@@ -60,4 +60,4 @@ Spectrum exporter. Should be run under a renderable environment (not on a cluste
 - *Choose Bck-Ref*: Choose a background and a reference file (in this order!).
 - *Select Areas*: Select a vertical interesting areas (an average on the height will be computed) and click on *Add Selection*.
 - *Extract*: each selection is extracted and shown.
-    - If you want to extract the curve, select horizontally and click on *Save Spectrum*. Keep in mind that the first y-value (specified by the selection) will be removed from the whole curve in order to erase plateau.
+    - If you want to extract the curve, select horizontally and click on *Save Spectrum*. Keep in mind that the first y-value (specified by the selection) will be removed from the whole curve in order to erase the plateau.
