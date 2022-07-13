@@ -2,7 +2,7 @@
 
 ## Setting Up Environment
 
-***Not Tested under Windows OS***
+***Not Tested with Windows OS***
 
 Assuming ```virtualenv``` is installed with ```python3``` on the current system and a terminal is opened in the project root folder, run the following command:
 ```shell
