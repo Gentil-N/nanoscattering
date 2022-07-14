@@ -62,16 +62,16 @@ def load_triangle_by_color(filename):
     export_collada(point_coords, indices, "./output/" + os.path.basename(filename) + ".dae")
     return (point_coords, indices)
 
-def load_triangle_by_angle(filename, na, ni):
+def load_triangle_by_angle(filename, theta_a, theta_i):
     """
     Load a 'ply' file with triangles (included in collection angles) returning spherical coordinates (phi & theta, indices) 
     """
     data = pf.PlyData.read(filename)
     point_coords = []
     #vertices = []
-    radius = math.sin(na)
-    c = math.cos(na)
-    center = (c * math.sin(ni), 0.0, -c * math.cos(ni))
+    radius = math.sin(theta_a)
+    c = math.cos(theta_a)
+    center = (c * math.sin(theta_i), 0.0, -c * math.cos(theta_i))
     for vertex in data.elements[0]:
         if utils.is_inside_sphere(center, radius, (vertex[0], vertex[1], vertex[2])):
             #vertices.append((vertex[0], vertex[1], vertex[2]))
