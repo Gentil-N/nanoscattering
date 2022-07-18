@@ -12,7 +12,7 @@ def exact_sca_ext(ref_indices_raw, wavelengths, particle_size, order_len, output
     res = mietheory.ccs_exact(ref_indices_raw, wavelengths, particle_size, order_len)
     fig0 = plt.figure(num=0)
     ax0 = fig0.subplots(nrows=1, ncols=1)
-    ax0.set_title("Scattering Cross Section with Coeff")
+    ax0.set_title("Cross Sections")
     ax0.plot(wavelengths, res[0], label="Sca Total")
     ax0.plot(wavelengths, res[1], label="Ext Total")
     ax0.plot(wavelengths, res[1] - res[0], label="Abs")

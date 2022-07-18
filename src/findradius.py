@@ -6,7 +6,7 @@ import os
 
 files_spectrum = ["./res/spectrum-test-67nm", "./res/spectrum-test-72nm", "./res/spectrum-test-82nm"]
 
-data_surface = inout.import_surface("./res/surface-na02ni025")
+data_surface = inout.import_surface("./res/surface-100x")
 for filespec in files_spectrum:
     data_spectrum = inout.import_spectrum(filespec)
     index, spectrum = utils.find_matching(data_surface, data_spectrum)
